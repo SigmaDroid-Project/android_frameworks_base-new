@@ -86,6 +86,8 @@ public interface StatusBarIconController {
     /** Sets whether the icon in the given slot should be visible or not. */
     void setIconVisibility(String slot, boolean b);
 
+    public void setImsIcon(String slot, ImsIconState state);
+
     /**
      * Sets the live region mode for the icon
      *
