@@ -28,6 +28,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.res.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBarPolicy.NetworkTrafficState;
 import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.CallIndicatorIconState;
+import com.android.systemui.statusbar.connectivity.ImsIconState;
 
 import java.util.List;
 
@@ -101,6 +102,8 @@ public interface StatusBarIconController {
 
     /** Sets whether the icon in the given slot should be visible or not. */
     void setIconVisibility(String slot, boolean b);
+
+    public void setImsIcon(String slot, ImsIconState state);
 
     /**
      * Sets the live region mode for the icon
