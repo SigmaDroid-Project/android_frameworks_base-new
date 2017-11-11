@@ -104,4 +104,11 @@
 
     <!-- Build properties from a GMS certified device against current platform SPL level -->
     <java-symbol type="array" name="config_certifiedBuildProperties" />
+
+    <!-- Enable face auth only when swiping security view -->
+    <java-symbol type="bool" name="config_faceAuthOnlyOnSecurityView" />
+
+    <!-- Whether device supports an alt. ambient display -->
+    <java-symbol type="bool" name="config_alt_ambient_display"/>
+
 </resources>
