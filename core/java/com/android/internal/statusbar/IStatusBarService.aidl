@@ -255,4 +255,9 @@ interface IStatusBarService
      * Toggle Flashlight
      */
     void toggleCameraFlash();
+
+    /**
+     * Kill App
+     */
+    void killForegroundApp();
 }
