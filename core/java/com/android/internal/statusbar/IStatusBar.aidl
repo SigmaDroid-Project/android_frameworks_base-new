@@ -394,4 +394,9 @@ oneway interface IStatusBar
     void screenPinningStateChanged(boolean enabled);
 
     void restartSystemUI();
+
+    /** 
+     * Toggle Flashlight
+     */
+    void toggleCameraFlash();
 }
