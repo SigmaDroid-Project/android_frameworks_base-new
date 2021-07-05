@@ -840,6 +840,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 case 9:
                     resId = R.drawable.ic_volte_margaritov2;
                     break;
+                // Vivo VoLTE icon
+                case 10:
+                    resId = R.drawable.ic_volte_vivo;
+                    break;
                 // Dynamic
                 case 1:
                 default:
@@ -939,6 +943,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 case 9:
                     resId = R.drawable.ic_volte_margaritov2;
                     break;
+                // Vivo VoLTE icon
+                case 10:
+                    resId = R.drawable.ic_volte_vivo;
+                    break;
                  // Dynamic
                 case 1:
                 default:
@@ -1020,6 +1028,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 case 9:
                     resId = R.drawable.ic_volte_margaritov2;
                     break;
+                // Vivo VoLTE icon
+                case 10:
+                    resId = R.drawable.ic_volte_vivo;
+                    break;
                 // Dynamic
                 case 1:
                 default:
@@ -1059,6 +1071,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 // Margaritov's VoLTE icon2
                 case 9:
                     resId = R.drawable.ic_volte_margaritov2;
+                    break;
+                // Vivo VoLTE icon
+                case 10:
+                    resId = R.drawable.ic_volte_vivo;
                     break;
                 // Dynamic
                 case 1:
@@ -1103,6 +1119,10 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 // Margaritov's VoLTE icon2
                 case 9:
                     resId = R.drawable.ic_volte_margaritov2;
+                    break;
+                // Vivo VoLTE icon
+                case 10:
+                    resId = R.drawable.ic_volte_vivo;
                     break;
                 // Dynamic
                 case 1:
