@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 The OmniROM project
- * Copyright (C) 2022-2025 crDroid Android project
+ * Copyright (C) 2022-2024 crDroid Android project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import androidx.annotation.Nullable;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
-import com.android.internal.util.crdroid.OmniJawsClient;
-import com.android.internal.util.crdroid.Utils;
+import com.android.internal.util.android.OmniJawsClient;
+import com.android.internal.util.evolution.Utils;
 import com.android.systemui.animation.Expandable;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
@@ -52,7 +52,6 @@ import javax.inject.Inject;
 public class WeatherTile extends QSTileImpl<BooleanState> implements OmniJawsClient.OmniJawsObserver {
 
     public static final String TILE_SPEC = "weather";
-    private static final String SERVICE_PACKAGE = "org.omnirom.omnijaws";
 
     private static final String TAG = "WeatherTile";
     private static final boolean DEBUG = false;
@@ -92,7 +91,7 @@ public class WeatherTile extends QSTileImpl<BooleanState> implements OmniJawsCli
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.CRDROID_SETTINGS;
+        return MetricsEvent.VIEW_UNKNOWN;
     }
 
     @Override
@@ -164,11 +163,6 @@ public class WeatherTile extends QSTileImpl<BooleanState> implements OmniJawsCli
                 intent.setComponent(new ComponentName("com.google.android.googlequicksearchbox",
                         "com.google.android.apps.gsa.velour.DynamicActivityTrampoline"));
                 mActivityStarter.postStartActivityDismissingKeyguard(intent, 0);
-            } else {
-                final Intent weatherActivityIntent = new Intent();
-                weatherActivityIntent.setAction(Intent.ACTION_MAIN);
-                weatherActivityIntent.setClassName(SERVICE_PACKAGE, SERVICE_PACKAGE + ".WeatherActivity");
-                mActivityStarter.postStartActivityDismissingKeyguard(weatherActivityIntent, 0);
             }
         }
         mEnabled = mWeatherClient.isOmniJawsEnabled();
