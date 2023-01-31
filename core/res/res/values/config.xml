@@ -7343,4 +7343,7 @@
          features. Examples include the search functionality or the app
          predictor. -->
     <string name="config_systemVendorIntelligence" translatable="false"></string>
+
+    <!-- Whether to show weather on the lock screen by default. -->
+    <bool name="config_lockscreenWeatherEnabledByDefault">false</bool>
 </resources>

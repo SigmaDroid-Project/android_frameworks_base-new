@@ -318,7 +318,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
             );
 
             mSecureSettings.registerContentObserverForUserSync(
-                    Settings.Secure.LOCKSCREEN_SMARTSPACE_ENABLED,
+                    Settings.Secure.LOCK_SCREEN_WEATHER_ENABLED,
                     false, /* notifyForDescendants */
                     mShowWeatherObserver,
                     UserHandle.USER_ALL
@@ -350,6 +350,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         });
 
         updateDoubleLineClock();
+
 
         mKeyguardUnlockAnimationController.addKeyguardUnlockAnimationListener(
                 mKeyguardUnlockAnimationListener);
@@ -698,8 +699,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         }
 
         if (!mCanShowDoubleLineClock) {
-            mUiExecutor.execute(() -> displayClock(KeyguardClockSwitch.SMALL,
-                    /* animate */ true));
+            mUiExecutor.execute(() -> displayClock(KeyguardClockSwitch.SMALL, /* animate */ true));
         }
     }
 
