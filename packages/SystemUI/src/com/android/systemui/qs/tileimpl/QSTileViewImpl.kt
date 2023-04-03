@@ -266,7 +266,7 @@ constructor(
     private var vertical = false
     private var labelHide = false
     private var forceHideCheveron = false
-    private var labelSize = 14f
+    private var labelSize = 15f
     private var secondaryLabelSize = 13f
 
     /** Visuo-haptic long-press effects */
