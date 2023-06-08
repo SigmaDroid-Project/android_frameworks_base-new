@@ -109,6 +109,14 @@ public class TileUtils {
         return (float) labelSize;
     }
 
+    public static float getQSTileSecondaryLabelSize(Context context) {
+        int secondaryLabelSize = Settings.System.getIntForUser(context.getContentResolver(),
+                Settings.System.QS_TILE_SECONDARY_LABEL_SIZE,
+                13, UserHandle.USER_CURRENT);
+        if (getQsUiStyle(context) != 0) secondaryLabelSize = secondaryLabelSize - 2;
+        return (float) secondaryLabelSize;
+    }
+
     public static boolean getQSTileVerticalLayout(Context context) {
         return Settings.System.getIntForUser(context.getContentResolver(),
                 Settings.System.QS_TILE_VERTICAL_LAYOUT,
