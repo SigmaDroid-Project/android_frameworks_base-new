@@ -305,6 +305,7 @@ constructor(
     private var labelHide = false
     private var forceHideCheveron = false
     private var labelSize = 14f
+    private var secondaryLabelSize = 13f
 
     /** Visuo-haptic long-press effects */
     private var longPressEffectAnimator: ValueAnimator? = null
@@ -417,8 +418,9 @@ constructor(
 
     fun updateResources() {
         labelSize = TileUtils.getQSTileLabelSize(context)
+        secondaryLabelSize = TileUtils.getQSTileSecondaryLabelSize(context)
         label.setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSize)
-        secondaryLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, labelSize)
+        secondaryLabel.setTextSize(TypedValue.COMPLEX_UNIT_SP, secondaryLabelSize)
 
         if (isA11Style) {
             updateA11StyleResources()
