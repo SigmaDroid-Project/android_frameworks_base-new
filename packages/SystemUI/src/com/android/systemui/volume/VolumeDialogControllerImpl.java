@@ -1400,6 +1400,9 @@ public class VolumeDialogControllerImpl implements VolumeDialogController, Dumpa
             boolean changed = false;
             if (action.equals(AudioManager.VOLUME_CHANGED_ACTION)) {
                 final int stream = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE,
+                if (stream == AudioSystem.STREAM_MUSIC) {
+                    return;
+                }
                         STREAM_UNKNOWN);
                 final int oldLevel = intent
                         .getIntExtra(AudioManager.EXTRA_PREV_VOLUME_STREAM_VALUE, -1);
