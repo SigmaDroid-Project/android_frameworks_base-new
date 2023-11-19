@@ -1200,11 +1200,7 @@ public class SettingsProvider extends ContentProvider {
         enforceDeviceConfigWritePermission(getContext(), keyValues.keySet());
         final String callingPackage = resolveCallingPackage();
 
-        try {
-            if (!callingPackage.equals("com.google.android.gms")) {
-                enforceWritePermission(Manifest.permission.WRITE_DEVICE_CONFIG);
-            }
-        } catch (SecurityException e) {}
+        enforceDeviceConfigWritePermission(getContext(), keyValues.keySet());
 
         synchronized (mLock) {
             if (getSyncDisabledModeConfigLocked() != SYNC_DISABLED_MODE_NONE) {
@@ -2461,6 +2457,13 @@ public class SettingsProvider extends ContentProvider {
         // the WRITE_ALLOWLISTED_DEVICE_CONFIG path to log any flags that need to be allowlisted.
         boolean isRestrictedShell = android.security.Flags.protectDeviceConfigFlags()
                 && hasAllowlistPermission;
+
+        boolean isRoot = Binder.getCallingUid() == Process.ROOT_UID;
+        String callingPackage = resolveCallingPackage();
+
+        if (isRoot || hasWritePermission || callingPackage.equals("com.google.android.gms")) {
+            return;
+        }
 
         if (!isRestrictedShell && hasWritePermission) {
             assertCallingUserDenyList(flags);
