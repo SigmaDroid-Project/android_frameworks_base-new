@@ -150,6 +150,7 @@ import com.android.systemui.statusbar.policy.AccessibilityManagerWrapper;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DevicePostureController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.AlphaTintDrawableWrapper;
 import com.android.systemui.util.RoundedCornerProgressDrawable;
 import com.android.systemui.util.settings.SecureSettings;
@@ -159,13 +160,15 @@ import com.android.systemui.volume.panel.shared.flag.VolumePanelFlag;
 import com.android.systemui.volume.ui.navigation.VolumeNavigator;
 
 import dagger.Lazy;
-
 import lineageos.providers.LineageSettings;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.security.auth.callback.Callback;
+import com.android.internal.util.crdroid.ThemeUtils;
 
 /**
  * Visual presentation of the volume dialog.
@@ -177,7 +180,11 @@ import java.util.function.Consumer;
 public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         ConfigurationController.ConfigurationListener,
         ViewTreeObserver.OnComputeInternalInsetsListener {
+        
     private static final String TAG = Util.logTag(VolumeDialogImpl.class);
+
+    public static final String CUSTOM_VOLUME_STYLES =
+            "system:" + "custom_volume_styles";
 
     private static final long USER_ATTEMPT_GRACE_PERIOD = 1000;
     private static final int UPDATE_ANIMATION_DURATION = 80;
@@ -325,6 +332,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     private boolean mConfigChanged = false;
     private boolean mIsAnimatingDismiss = false;
     private boolean mHasSeenODICaptionsTooltip;
+    private TunerService mTunerService;
     private ViewStub mODICaptionsTooltipViewStub;
     @VisibleForTesting View mODICaptionsTooltipView = null;
 
@@ -376,6 +384,9 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
     private final VolumeDialogInteractor mInteractor;
 
     private final VolumeUtils mVolumeUtils;
+    
+    private int customVolumeStyles = 0;
+    private ThemeUtils mThemeUtils;
 
     public VolumeDialogImpl(
             Context context,
@@ -384,6 +395,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
             DeviceProvisionedController deviceProvisionedController,
             ConfigurationController configurationController,
             MediaOutputDialogManager mediaOutputDialogManager,
+            TunerService tunerService,
             InteractionJankMonitor interactionJankMonitor,
             VolumePanelNavigationInteractor volumePanelNavigationInteractor,
             VolumeNavigator volumeNavigator,
@@ -411,6 +423,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         mConfigurationController = configurationController;
         mMediaOutputDialogManager = mediaOutputDialogManager;
         mCsdWarningDialogFactory = csdWarningDialogFactory;
+        mTunerService = tunerService;
         mIsTv = isTv();
         mHasSeenODICaptionsTooltip =
                 Prefs.getBoolean(context, Prefs.Key.HAS_SEEN_ODI_CAPTIONS_TOOLTIP, false);
@@ -466,6 +479,8 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                     false, volumePanelOnLeftObserver);
             volumePanelOnLeftObserver.onChange(true);
         }
+        mTunerService.addTunable(mTunable, CUSTOM_VOLUME_STYLES);
+        mThemeUtils = new ThemeUtils(mContext);
 
         ContentObserver volumeTimeoutObserver = new ContentObserver(null) {
             @Override
@@ -934,6 +949,33 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         mRingerCount = mShowVibrate ? 3 : 2;
     }
 
+    private final TunerService.Tunable mTunable = new TunerService.Tunable() {
+        @Override
+        public void onTuningChanged(String key, String newValue) {
+            switch (key) {
+               case CUSTOM_VOLUME_STYLES:
+                    final int selectedVolStyle = TunerService.parseInteger(newValue, 2);
+                    if (customVolumeStyles != selectedVolStyle) {
+                        customVolumeStyles = selectedVolStyle;
+                        mHandler.post(() -> {
+                    if (customVolumeStyles > 2 || customVolumeStyles == 0) {
+                        setVolumeStyle("com.android.system.volume.style"+ customVolumeStyles, "android.theme.customization.volume_panel");
+                    } else {
+                        setVolumeStyle("com.android.systemui", "android.theme.customization.volume_panel");
+                            }
+                       });
+                    }
+                    break;                 
+                default:
+                    break;
+             }
+        }
+    };
+
+    private void setVolumeStyle(String pkgName, String category) {
+        mThemeUtils.setOverlayEnabled(category, pkgName, "com.android.systemui");
+    }
+
     protected ViewGroup getDialogView() {
         return mDialogView;
     }
@@ -1089,7 +1131,13 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         row.iconMuteRes = iconMuteRes;
         row.important = important;
         row.defaultStream = defaultStream;
-        row.view = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_row, null);
+        if (customVolumeStyles == 1) {
+           row.view = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_row_rui, null);
+        } else if (customVolumeStyles == 2) {
+           row.view = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_row, null);
+        } else {
+            row.view = mDialog.getLayoutInflater().inflate(R.layout.volume_dialog_row_aosp, null);
+        }
         row.view.setId(row.stream);
         row.view.setTag(row);
         row.header = row.view.findViewById(R.id.volume_row_header);
@@ -1106,8 +1154,20 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
 
         row.anim = null;
 
-        final LayerDrawable seekbarDrawable =
-                (LayerDrawable) mContext.getDrawable(R.drawable.volume_row_seekbar);
+        int[] drawables = {
+            R.drawable.volume_row_seekbar_aosp,
+            R.drawable.volume_row_seekbar_rui,
+            R.drawable.volume_row_seekbar,
+            R.drawable.volume_row_seekbar_double_layer,
+            R.drawable.volume_row_seekbar_gradient,
+            R.drawable.volume_row_seekbar_neumorph,
+            R.drawable.volume_row_seekbar_neumorph_outline,
+            R.drawable.volume_row_seekbar_outline,
+            R.drawable.volume_row_seekbar_shaded_layer
+        };
+
+        final LayerDrawable seekbarDrawable = 
+                (LayerDrawable) mContext.getDrawable(drawables[customVolumeStyles]);
 
         final LayerDrawable seekbarProgressDrawable = (LayerDrawable)
                 ((RoundedCornerProgressDrawable) seekbarDrawable.findDrawableByLayerId(
