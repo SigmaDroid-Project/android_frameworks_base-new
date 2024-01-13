@@ -240,6 +240,13 @@ public class KeyguardClockSwitch extends RelativeLayout {
     public LogBuffer getLogBuffer() {
         return mLogBuffer;
     }
+    
+    private final ContentObserver mCustomClockObserver = new ContentObserver(null) {
+        @Override
+        public void onChange(boolean change) {
+            updateClockTargetRegions();
+        }
+    };
 
     /** Returns the id of the currently rendering clock */
     public String getClockId() {
