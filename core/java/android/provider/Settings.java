@@ -7229,6 +7229,16 @@ public final class Settings {
         public static final String VOWIFI_ICON_STYLE = "vowifi_icon_style";
 
         /**
+         * @hide
+         */
+        public static final String CUSTOM_KEYGUARD_SHOW_BATTERY_BAR = "sysui_keyguard_show_battery_bar";
+
+        /**
+         * @hide
+         */
+        public static final String CUSTOM_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
+
+        /**
          * Clock font size
          * @hide
          */
@@ -7464,6 +7474,8 @@ public final class Settings {
             PRIVATE_SETTINGS.add(DEFAULT_DEVICE_FONT_SCALE);
             PRIVATE_SETTINGS.add(AMBIENT_TEXT_COLOR);
             PRIVATE_SETTINGS.add(AMBIENT_TEXT_TYPE_COLOR);
+            PRIVATE_SETTINGS.add(CUSTOM_KEYGUARD_SHOW_BATTERY_BAR);
+            PRIVATE_SETTINGS.add(CUSTOM_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
         }
 
         /**
