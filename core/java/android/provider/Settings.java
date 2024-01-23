@@ -7237,6 +7237,14 @@ public final class Settings {
         public static final String CUSTOM_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS = "sysui_keyguard_show_battery_bar_always";
 
         /**
+         * Whether to show Fahrenheit or Celsius with battery info on the
+         * lockscreen while charging
+         *
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_INFO_TEMP_UNIT = "lockscreen_charge_temp_unit";
+
+        /**
          * Clock font size
          * @hide
          */
@@ -7400,6 +7408,7 @@ public final class Settings {
             PRIVATE_SETTINGS.add(DEFAULT_DEVICE_FONT_SCALE);
             PRIVATE_SETTINGS.add(CUSTOM_KEYGUARD_SHOW_BATTERY_BAR);
             PRIVATE_SETTINGS.add(CUSTOM_KEYGUARD_SHOW_BATTERY_BAR_ALWAYS);
+            PRIVATE_SETTINGS.add(LOCKSCREEN_BATTERY_INFO_TEMP_UNIT);
         }
 
         /**
