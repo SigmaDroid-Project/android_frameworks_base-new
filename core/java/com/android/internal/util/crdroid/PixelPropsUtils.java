@@ -21,6 +21,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.Binder;
 import android.os.SystemProperties;
 import android.util.Log;
 
@@ -379,6 +380,13 @@ public final class PixelPropsUtils {
         } catch (Exception e) {
             Log.e(TAG, "Failed to set prop " + key, e);
         }
+    }
+
+    public static boolean shouldBypassTaskPermission(Context context) {
+        // GMS doesn't have MANAGE_ACTIVITY_TASKS permission
+        final int callingUid = Binder.getCallingUid();
+        final String callingPackage = context.getPackageManager().getNameForUid(callingUid);
+        return callingPackage != null && callingPackage.toLowerCase().contains("google");
     }
 
     private static void spoofBuildGms() {
