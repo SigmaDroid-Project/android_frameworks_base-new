@@ -146,7 +146,7 @@ public class UdfpsAnimation extends ImageView {
 
     private void updateAnimationStyle() {
         int value = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.UDFPS_ANIM_STYLE, 0, UserHandle.USER_CURRENT);
+                Settings.System.UDFPS_ANIM_STYLE, 26, UserHandle.USER_CURRENT);
         mContext.getMainExecutor().execute(() -> {
             updateAnimationStyle(value);
         });
