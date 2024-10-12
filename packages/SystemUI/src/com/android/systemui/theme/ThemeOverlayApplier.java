@@ -275,11 +275,9 @@ public class ThemeOverlayApplier implements Dumpable {
             if (pendingCreation != null) {
                 isBlackMode = pendingCreation.length == 2;
                 for (FabricatedOverlay overlay : pendingCreation) {
-                    try {
+                    if (overlay != null) {
                         identifiersPending.add(overlay.getIdentifier());
                         transaction.registerFabricatedOverlay(overlay);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "NPE for overlay.getIdentifier()", e);
                     }
                 }
             }
