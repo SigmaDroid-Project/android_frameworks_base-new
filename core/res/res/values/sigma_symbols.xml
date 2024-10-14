@@ -5,6 +5,11 @@
 -->
 
 <resources>
+    <!-- Custom clocks -->
+    <java-symbol type="dimen" format="float" name="presentation_clock_text_size" />
+    <java-symbol type="dimen" format="float" name="large_clock_text_size" />
+    <java-symbol type="dimen" format="float" name="small_clock_text_size" />
+
     <!-- Settings Restart -->
     <java-symbol type="string" name="settings_restart_title" />
     <java-symbol type="string" name="settings_restart_message" />

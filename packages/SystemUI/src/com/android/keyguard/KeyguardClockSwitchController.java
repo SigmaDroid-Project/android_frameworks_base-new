@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 
@@ -62,6 +63,8 @@ import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.ViewController;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 import com.android.systemui.util.settings.SecureSettings;
+
+import com.android.systemui.clocks.ClockStyle;
 
 import kotlinx.coroutines.DisposableHandle;
 
@@ -130,6 +133,18 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         @Override
         public void onChange(boolean change) {
             setWeatherVisibility();
+        }
+    };
+    
+    private boolean mEnableCustomClock = false;
+    private int mClockStyle = 0;
+    private final ContentObserver mCustomClockObserver = new ContentObserver(null) {
+        @Override
+        public void onChange(boolean change) {
+            mClockStyle = mSecureSettings.getIntForUser(
+                ClockStyle.CLOCK_STYLE_KEY, 0, UserHandle.USER_CURRENT);
+            mEnableCustomClock = mClockStyle != 0;
+            updateDoubleLineClock();
         }
     };
 
@@ -225,6 +240,8 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
     protected void onInit() {
         mKeyguardSliceViewController.init();
 
+        mStatusArea = mView.findViewById(R.id.keyguard_status_area);
+
         if (!MigrateClocksToBlueprint.isEnabled()) {
             mSmallClockFrame = mView
                 .findViewById(com.android.systemui.customization.R.id.lockscreen_clock_view);
@@ -297,6 +314,12 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
                     mShowWeatherObserver,
                     UserHandle.USER_ALL
             );
+            mSecureSettings.registerContentObserverForUserSync(
+                    ClockStyle.CLOCK_STYLE_KEY,
+                    false, /* notifyForDescendants */
+                    mCustomClockObserver,
+                    UserHandle.USER_ALL
+            );
         });
 
         updateDoubleLineClock();
@@ -348,6 +371,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         mBgExecutor.execute(() -> {
             mSecureSettings.unregisterContentObserverSync(mDoubleLineClockObserver);
             mSecureSettings.unregisterContentObserverSync(mShowWeatherObserver);
+            mSecureSettings.unregisterContentObserverSync(mCustomClockObserver);
         });
 
         mKeyguardUnlockAnimationController.removeKeyguardUnlockAnimationListener(
@@ -622,6 +646,16 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
                     .getInteger(com.android.internal.R.integer.config_doublelineClockDefault),
             UserHandle.USER_CURRENT) != 0;
 
+        if (mEnableCustomClock) {
+            mCanShowDoubleLineClock = false;
+            if (mCanShowDoubleLineClock) {
+                mSecureSettings.putIntForUser(
+                        Settings.Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK,
+                        0, UserHandle.USER_CURRENT);
+                mCanShowDoubleLineClock = false;
+            }
+        }
+
         if (!mCanShowDoubleLineClock) {
             mUiExecutor.execute(() -> displayClock(KeyguardClockSwitch.SMALL,
                     /* animate */ true));
@@ -631,9 +665,13 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
     private void setDateWeatherVisibility() {
         if (mDateWeatherView != null) {
             mUiExecutor.execute(() -> {
-                mDateWeatherView.setVisibility(clockHasCustomWeatherDataDisplay()
-                        ? mKeyguardDateWeatherViewInvisibility
-                        : View.VISIBLE);
+                if (mEnableCustomClock) {
+                    mDateWeatherView.setVisibility(View.GONE);
+                } else {
+                    mDateWeatherView.setVisibility(clockHasCustomWeatherDataDisplay()
+                            ? mKeyguardDateWeatherViewInvisibility
+                            : View.VISIBLE);
+                }
             });
         }
     }

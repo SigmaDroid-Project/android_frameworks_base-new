@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2019-2024 The Evolution X Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Custom clocks -->
+    <dimen name="presentation_clock_text_size">50dp</dimen>
+    <dimen name="large_clock_text_size">150dp</dimen>
+    <dimen name="small_clock_text_size">86dp</dimen>
+
+</resources>

@@ -93,4 +93,9 @@
 
     <!-- Face unlock icon -->
     <dimen name="face_unlock_icon_margin_top">6dp</dimen>
+
+    <!-- Lockscreen Clock/AOD -->  
+    <dimen name="custom_aod_image_size">180dp</dimen>
+    <dimen name="custom_clock_frame_margin_top">0dp</dimen>
+    <dimen name="keyguard_status_area_margin_top">0dp</dimen>
 </resources>
