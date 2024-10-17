@@ -486,6 +486,12 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 mHapticFeedback = mSecureSettings.get().getIntForUser(
                         Settings.Secure.VOLUME_DIALOG_HAPTIC_FEEDBACK,
                         0, UserHandle.USER_CURRENT) != 0;
+                        if (uri == null || uri.equals(Settings.System.getUriFor("volume_sound_haptics"))) {
+                            final boolean soundHapticsEnabled = Settings.System.getInt(
+                                    mContext.getContentResolver(),
+                                    "volume_sound_haptics", 0) != 0;
+                            mVolumeUtils.setSoundsHapticsEnabled(soundHapticsEnabled);
+                        }
                 mConfigChanged = true;
             }
         };
@@ -498,6 +504,10 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         mContext.getContentResolver().registerContentObserver(
                 Settings.Secure.getUriFor(Settings.Secure.VOLUME_DIALOG_HAPTIC_FEEDBACK),
                 false, settingsObserver);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor("volume_sound_haptics"),
+                false, mVolumeDialogImplObserver);
+        mVolumeDialogImplObserver.onChange(true, null);
         settingsObserver.onChange(true);
 
         initDimens();
@@ -3309,6 +3319,7 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
                 mHandler.sendMessageDelayed(mHandler.obtainMessage(H.RECHECK, mRow),
                         USER_ATTEMPT_GRACE_PERIOD);
             }
+            mVolumeUtils.playSoundForStreamType(mRow.stream);
         }
     }
 
