@@ -65,6 +65,7 @@ import android.graphics.Color;
 import android.graphics.Insets;
 import android.graphics.Rect;
 import android.graphics.Region;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -326,6 +327,7 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
             new ShadeHeadsUpChangedListener();
     private final ConfigurationListener mConfigurationListener = new ConfigurationListener();
     private final SettingsChangeObserver mSettingsChangeObserver;
+    private final ContentObserver mNPVCSettingsObserver;
     private final StatusBarStateListener mStatusBarStateListener = new StatusBarStateListener();
     private final NotificationPanelView mView;
     private final VibratorHelper mVibratorHelper;
@@ -640,6 +642,9 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
     private int mLockscreenToDreamingTransitionTranslationY;
     private int mGoneToDreamingTransitionTranslationY;
     private boolean mForceFlingAnimationForTest = false;
+
+    private int mQsHapticsIntensity = 1;
+
     private final SplitShadeStateController mSplitShadeStateController;
     private final Runnable mFlingCollapseRunnable = () -> fling(0, false /* expand */,
             mNextCollapseSpeedUpFactor, false /* expandBecauseOfFalsing */);
@@ -941,6 +946,15 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
                 return true;
             }
         });
+        mNPVCSettingsObserver = new ContentObserver(handler) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                if (uri == null || uri.equals(Settings.System.getUriFor("qs_haptics_intensity"))) {
+                    mQsHapticsIntensity = Settings.System.getInt(mContentResolver,
+                            "qs_haptics_intensity",0);
+                }
+            }
+        };
         mConversationNotificationManager = conversationNotificationManager;
         mAuthController = authController;
         mLockIconViewController = lockIconViewController;
@@ -3799,7 +3813,8 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
     private void maybeVibrateOnOpening(boolean openingWithTouch) {
         if (mVibrateOnOpening && mBarState != KEYGUARD && mBarState != SHADE_LOCKED) {
             if (!openingWithTouch || !mHasVibratedOnOpen) {
-                performHapticFeedback(HapticFeedbackConstants.GESTURE_START);
+                // performHapticFeedback(HapticFeedbackConstants.GESTURE_START);
+                com.android.internal.util.android.VibrationUtils.triggerVibration(mView.getContext(), mQsHapticsIntensity);
                 mHasVibratedOnOpen = true;
                 mShadeLog.v("Vibrating on opening, mHasVibratedOnOpen=true");
             }
@@ -4728,6 +4743,10 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
             mConfigurationController.addCallback(mConfigurationListener);
             mTunerService.addTunable(this, DOUBLE_TAP_SLEEP_GESTURE);
             mTunerService.addTunable(this, DOUBLE_TAP_SLEEP_LOCKSCREEN);
+            mContentResolver.registerContentObserver(Settings.System.getUriFor(
+                    "qs_haptics_intensity"), false,
+                    mNPVCSettingsObserver);
+            mNPVCSettingsObserver.onChange(true, null);
             // Theme might have changed between inflating this view and attaching it to the
             // window, so
             // force a call to onThemeChanged
@@ -4739,6 +4758,7 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
 
         @Override
         public void onViewDetachedFromWindow(View v) {
+            mContentResolver.unregisterContentObserver(mNPVCSettingsObserver);
             mContentResolver.unregisterContentObserver(mSettingsChangeObserver);
             mFragmentService.getFragmentHostManager(mView)
                     .removeTagListener(QS.TAG, mQsController.getQsFragmentListener());
