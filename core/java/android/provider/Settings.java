@@ -13369,12 +13369,6 @@ public final class Settings {
         public static final String SHOW_CLIPBOARD_OVERLAY = "show_clipboard_overlay";
 
         /**
-         * Whether to pulse ambient on new music tracks
-         * @hide
-         */
-        public static final String PULSE_ON_NEW_TRACKS = "pulse_on_new_tracks";
-
-        /**
          * Whether to enable DOZE only when charging
          * @hide
          */
