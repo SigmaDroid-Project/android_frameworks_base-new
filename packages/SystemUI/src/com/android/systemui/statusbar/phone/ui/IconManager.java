@@ -242,8 +242,11 @@ public class IconManager implements DemoModeCommandReceiver {
         mGroup.addView(view, index, onCreateLayoutParams());
         return view;
     }
+
     private StatusBarImsView addImsIcon(int index, String slot, ImsIconState state) {
-        StatusBarImsView view = new StatusBarImsView(mContext, slot, state);
+        // StatusBarImsView view = new StatusBarImsView(mContext, slot, state);
+        StatusBarImsView view = onCreateStatusBarImsView(slot);
+        view.applyImsState(state);
         mGroup.addView(view, index, onCreateLayoutParams());
         return view;
     }
@@ -259,8 +262,9 @@ public class IconManager implements DemoModeCommandReceiver {
     // }
 
     private StatusBarImsView onCreateStatusBarImsView(String slot) {
-        StatusBarImsView view = StatusBarImsView.fromContext(mContext, slot);
-        return view;
+        StatusBarImsView imsView = new StatusBarImsView(mContext, null);
+        imsView.setSlot(slot);
+        return imsView;
     }
 
     private ModernStatusBarWifiView onCreateModernStatusBarWifiView(String slot) {

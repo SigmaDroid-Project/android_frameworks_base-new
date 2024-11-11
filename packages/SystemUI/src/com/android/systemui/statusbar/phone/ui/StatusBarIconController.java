@@ -25,6 +25,7 @@ import com.android.internal.statusbar.StatusBarIcon;
 import com.android.systemui.res.R;
 import com.android.systemui.statusbar.phone.PhoneStatusBarPolicy.NetworkTrafficState;
 import com.android.systemui.statusbar.phone.StatusBarSignalPolicy.CallIndicatorIconState;
+import com.android.systemui.statusbar.connectivity.ImsIconState;
 
 import java.util.List;
 
