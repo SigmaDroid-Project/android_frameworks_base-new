@@ -165,6 +165,10 @@ public class StatusBarImsView extends FrameLayout implements
     private boolean updateState(ImsIconState state) {
         boolean needsLayout = false;
 
+        if (mState == null || state == null) {
+            return false;
+        }
+
         if (mState.visible != state.visible
                 || mState.vowifiVisible != state.vowifiVisible
                 || mState.volteVisible != state.volteVisible) {
@@ -177,6 +181,11 @@ public class StatusBarImsView extends FrameLayout implements
     }
 
     private void initViewState(ImsIconState state) {
+        if (state == null) {
+            setVisibility(View.GONE);
+            return;
+        }
+        
         setContentDescription(state.contentDescription);
         if (state.vowifiVisible) {
             mVolteIcon.setVisibility(View.GONE);

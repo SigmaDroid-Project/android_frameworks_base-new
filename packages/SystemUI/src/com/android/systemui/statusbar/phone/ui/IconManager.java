@@ -255,18 +255,6 @@ public class IconManager implements DemoModeCommandReceiver {
         return new StatusBarIconView(mContext, slot, null, blocked);
     }
 
-
-    // private StatusBarImsView onCreateStatusBarImsView(String slot, boolean blocked) {
-    //     StatusBarImsView view = StatusBarImsView.fromContext(mContext, slot, null, blocked);
-    //     return view;
-    // }
-
-    private StatusBarImsView onCreateStatusBarImsView(String slot) {
-        StatusBarImsView imsView = new StatusBarImsView(mContext, null);
-        imsView.setSlot(slot);
-        return imsView;
-    }
-
     private ModernStatusBarWifiView onCreateModernStatusBarWifiView(String slot) {
         return ModernStatusBarWifiView.constructAndBind(mContext, slot, mWifiViewModel);
     }
@@ -285,6 +273,11 @@ public class IconManager implements DemoModeCommandReceiver {
 
     private StatusBarNetworkTraffic onCreateStatusBarNetworkTraffic(String slot) {
         StatusBarNetworkTraffic view = StatusBarNetworkTraffic.fromContext(mContext, slot);
+        return view;
+    }
+
+    private StatusBarImsView onCreateStatusBarImsView(String slot) {
+        StatusBarImsView view = StatusBarImsView.fromContext(mContext, slot);
         return view;
     }
 
