@@ -32,7 +32,7 @@ import com.android.systemui.Dependency;
 import com.android.systemui.res.R;
 import com.android.systemui.tuner.TunerService;
 
-import com.android.internal.util.android.ThemeUtils;
+import com.android.internal.util.crdroid.ThemeUtils;
 import com.android.internal.util.android.VibrationUtils;
 
 public class VolumeUtils implements TunerService.Tunable {
