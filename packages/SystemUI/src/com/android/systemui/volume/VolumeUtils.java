@@ -38,18 +38,11 @@ import com.android.internal.util.android.VibrationUtils;
 public class VolumeUtils implements TunerService.Tunable {
     private static final String TAG = "VolumeUtils";
 
-    public static final String CUSTOM_VOLUME_STYLES =
-            "system:" + "custom_volume_styles";
-
     public static final String VOLUME_SOUND_HAPTICS =
             "system:" + "volume_sound_haptics";
 
     public static final String VOLUME_SLIDER_HAPTICS_INTENSITY =
             "system:" + "volume_slider_haptics_intensity";
-
-    private static final String VOLUME_STYLE_CATEGORY = "android.theme.customization.volume_panel";
-    private static final String VOLUME_STYLE_OVERLAY_TARGET_PKG = "com.android.systemui";
-    private static final String VOLUME_STYLE_OVERLAY_PREFIX = "com.android.system.volume.style";
 
     private static final int SOUND_HAPTICS_DELAY = 50;
     private static final int SOUND_HAPTICS_DURATION = 2000;
@@ -70,16 +63,6 @@ public class VolumeUtils implements TunerService.Tunable {
     
     private final TunerService mTunerService;
 
-    private static final int[] seekbarDrawables = {
-            R.drawable.volume_row_seekbar,
-            R.drawable.volume_row_seekbar_double_layer,
-            R.drawable.volume_row_seekbar_gradient,
-            R.drawable.volume_row_seekbar_neumorph,
-            R.drawable.volume_row_seekbar_neumorph_outline,
-            R.drawable.volume_row_seekbar_outline,
-            R.drawable.volume_row_seekbar_shaded_layer
-        };
-
     public VolumeUtils(Context context) {
         mContext = context;
         mHandler = new Handler();
@@ -88,7 +71,6 @@ public class VolumeUtils implements TunerService.Tunable {
         mThemeUtils = ThemeUtils.getInstance(context);
         mTunerService = Dependency.get(TunerService.class);
         mTunerService.addTunable(this,
-                CUSTOM_VOLUME_STYLES, 
                 VOLUME_SOUND_HAPTICS,
                 VOLUME_SLIDER_HAPTICS_INTENSITY);
     }
@@ -96,10 +78,6 @@ public class VolumeUtils implements TunerService.Tunable {
     @Override
     public void onTuningChanged(String key, String newValue) {
         switch (key) {
-            case CUSTOM_VOLUME_STYLES:
-                mVolumeStyle = TunerService.parseInteger(newValue, 2);
-                updateVolumeStyleOverlay();
-                break;
             case VOLUME_SOUND_HAPTICS:
                 mSoundHapticsEnabled = TunerService.parseIntegerSwitch(newValue, false);
                 break;
@@ -109,21 +87,6 @@ public class VolumeUtils implements TunerService.Tunable {
             default:
                 break;
         }
-    }
-
-    public int getRowDrawable() {
-        return seekbarDrawables[mVolumeStyle];
-    }
-    
-    private void updateVolumeStyleOverlay() {
-        setVolumeStyleOverlay(mVolumeStyle == 0 ? VOLUME_STYLE_OVERLAY_TARGET_PKG 
-            : VOLUME_STYLE_OVERLAY_PREFIX + mVolumeStyle);
-    }
-    
-    private void setVolumeStyleOverlay(String pkgName) {
-        mHandler.postDelayed(() -> {
-            mThemeUtils.setOverlayEnabled(VOLUME_STYLE_CATEGORY, pkgName, VOLUME_STYLE_OVERLAY_TARGET_PKG);
-        }, 1250);
     }
 
     public void playSoundForStreamType(int streamType) {
