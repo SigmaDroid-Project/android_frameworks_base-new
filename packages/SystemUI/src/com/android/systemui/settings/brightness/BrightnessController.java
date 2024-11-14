@@ -140,7 +140,7 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
                 break;
             case QS_BRIGHTNESS_SLIDER_HAPTIC:
                 mBrightnessSliderHaptic =
-                        TunerService.parseInteger(newValue, 0);
+                        TunerService.parseInteger(newValue, 2);
                 break;
             default:
                 break;
