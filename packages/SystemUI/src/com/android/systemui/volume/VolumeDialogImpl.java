@@ -431,6 +431,8 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
         mVolumePanelFlag = volumePanelFlag;
         mInteractor = interactor;
 
+        mVolumeUtils = new VolumeUtils(mContext);
+
         dumpManager.registerDumpable("VolumeDialogImpl", this);
 
         if (mUseBackgroundBlur) {
@@ -550,7 +552,6 @@ public class VolumeDialogImpl implements VolumeDialog, Dumpable,
             mDevicePostureController.removeCallback(mDevicePostureControllerCallback);
         }
         mVolumeUtils.onDestroy();
-        mVolumeDialogMenuIconBinder.destroy();
     }
 
     @Override
