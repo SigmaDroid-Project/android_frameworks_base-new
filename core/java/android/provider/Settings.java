@@ -7261,6 +7261,11 @@ public final class Settings {
         /**
          * @hide
          */
+        public static final String VOLUME_SLIDER_HAPTICS_INTENSITY = "volume_slider_haptics_intensity";
+
+        /**
+         * @hide
+         */
         public static final String QS_PANEL_TILE_HAPTIC = "qs_panel_tile_haptic";
 
         /**
