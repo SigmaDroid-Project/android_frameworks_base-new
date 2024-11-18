@@ -354,7 +354,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
                     UserHandle.USER_ALL
             );
 
-            mSecureSettings.registerContentObserverForUser(
+            mSecureSettings.registerContentObserverForUserSync(
                     Settings.Secure.CLOCK_LS,
                     false, /* notifyForDescendants */
                     mCustomClockObserver,
