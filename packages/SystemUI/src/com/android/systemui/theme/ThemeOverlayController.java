@@ -177,7 +177,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
     private final UiModeManager mUiModeManager;
     private ColorScheme mDarkColorScheme;
     private ColorScheme mLightColorScheme;
-    private final RisingThemeController mThemeController;
+    // private final RisingThemeController mThemeController;
 
     // Defers changing themes until Setup Wizard is done.
     private boolean mDeferredThemeEvaluation;
@@ -461,7 +461,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
         mUiModeManager = uiModeManager;
         mActivityManager = activityManager;
         dumpManager.registerDumpable(TAG, this);
-        mThemeController = new RisingThemeController(mContext, mBgHandler);
+        // mThemeController = new RisingThemeController(mContext, mBgHandler);
     }
 
     @Override
@@ -470,7 +470,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
         final IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_PROFILE_ADDED);
         filter.addAction(Intent.ACTION_WALLPAPER_CHANGED);
-        mThemeController.observeSettings(() -> reevaluateSystemTheme(true));
+        // mThemeController.observeSettings(() -> reevaluateSystemTheme(true));
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, mMainExecutor,
                 UserHandle.ALL);
         mSecureSettings.registerContentObserverForUserSync(
@@ -629,10 +629,10 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             mThemeStyle = fetchThemeStyleFromSetting();
             createOverlays(mMainWallpaperColor);
             mNeedsOverlayCreation = true;
-            if (DEBUG) {
+            // if (DEBUG) {
                 Log.d(TAG, "fetched overlays. accent: " + mSecondaryOverlay
                         + " neutral: " + mNeutralOverlay + " dynamic: " + mDynamicOverlay);
-            }
+            // }
         }
 
         updateThemeOverlays();

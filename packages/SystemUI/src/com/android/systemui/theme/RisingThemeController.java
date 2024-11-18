@@ -40,8 +40,8 @@ public class RisingThemeController {
     }
 
     public void observeSettings(Runnable reevaluateSystemThemeCallback) {
-        observeSettingsKeys(RisingSettingsConstants.SYSTEM_SETTINGS_KEYS, reevaluateSystemThemeCallback, true);
-        observeSettingsKeys(RisingSettingsConstants.SECURE_SETTINGS_KEYS, reevaluateSystemThemeCallback, false);
+        // observeSettingsKeys(RisingSettingsConstants.SYSTEM_SETTINGS_KEYS, reevaluateSystemThemeCallback, true);
+        // observeSettingsKeys(RisingSettingsConstants.SECURE_SETTINGS_KEYS, reevaluateSystemThemeCallback, false);
         observeSettingsKeys(RisingSettingsConstants.SYSTEM_SETTINGS_NOTIFY_ONLY_KEYS, null, true);
         observeSettingsKeys(RisingSettingsConstants.SECURE_SETTINGS_NOTIFY_ONLY_KEYS, null, false);
     }
@@ -68,7 +68,7 @@ public class RisingThemeController {
                     }
                 }
             };
-            mContentResolver.registerContentObserver(uri, false, contentObserver);
+            // mContentResolver.registerContentObserver(uri, false, contentObserver);
         } else {
             Log.e(TAG, "Failed to get URI for key");
         }
