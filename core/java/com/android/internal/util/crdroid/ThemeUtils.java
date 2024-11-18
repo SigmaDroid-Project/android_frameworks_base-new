@@ -63,7 +63,7 @@ public class ThemeUtils {
     public static final Comparator<OverlayInfo> OVERLAY_INFO_COMPARATOR =
             Comparator.comparingInt(a -> a.priority);
 
-    private static ThemeUtils instance;
+    // private static ThemeUtils instance;
     private Context mContext;
     private IOverlayManager mOverlayManager;
     private PackageManager pm;
@@ -76,16 +76,16 @@ public class ThemeUtils {
         pm = context.getPackageManager();
     }
 
-    public static ThemeUtils getInstance(Context context) {
-        if (instance == null) {
-            synchronized (ThemeUtils.class) {
-                if (instance == null) {
-                    instance = new ThemeUtils(context);
-                }
-            }
-        }
-        return instance;
-    }
+    // public static ThemeUtils getInstance(Context context) {
+    //     if (instance == null) {
+    //         synchronized (ThemeUtils.class) {
+    //             if (instance == null) {
+    //                 instance = new ThemeUtils(context);
+    //             }
+    //         }
+    //     }
+    //     return instance;
+    // }
 
     public void setOverlayEnabled(String category, String packageName, String target) {
         final String currentPackageName = getOverlayInfos(category, target).stream()
