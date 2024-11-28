@@ -20,22 +20,147 @@ import android.provider.Settings;
 public class RisingSettingsConstants {
     public static final String CLOCK_STYLE = "clock_style";
     public static final String VOLUME_STYLE = "custom_volume_styles";
-    public static final String STATUSBAR_CLOCK_CHIP = Settings.System.STATUSBAR_CLOCK_CHIP;
     public static final String QS_PANEL_TILE_HAPTIC = "qs_panel_tile_haptic";
 
+    private static final String OVERLAY_CATEGORY_ACCENT_COLOR =
+            "android.theme.customization.accent_color";
+    private static final String OVERLAY_CATEGORY_SYSTEM_PALETTE =
+            "android.theme.customization.system_palette";
+    private static final String OVERLAY_CATEGORY_THEME_STYLE =
+            "android.theme.customization.theme_style";
+    private static final String OVERLAY_CATEGORY_BG_COLOR =
+            "android.theme.customization.bg_color";
+    private static final String OVERLAY_COLOR_SOURCE =
+            "android.theme.customization.color_source";
+    private static final String OVERLAY_COLOR_BOTH =
+            "android.theme.customization.color_both";
+    private static final String OVERLAY_LUMINANCE_FACTOR =
+            "android.theme.customization.luminance_factor";
+    private static final String OVERLAY_CHROMA_FACTOR =
+            "android.theme.customization.chroma_factor";
+    private static final String OVERLAY_WHOLE_PALETTE =
+            "android.theme.customization.whole_palette";
+    private static final String OVERLAY_TINT_BACKGROUND =
+            "android.theme.customization.tint_background";
+    private static final String COLOR_SOURCE_PRESET = "preset";
+    private static final String COLOR_SOURCE_HOME = "home_wallpaper";
+    private static final String COLOR_SOURCE_LOCK = "lock_wallpaper";
+    private static final String TIMESTAMP_FIELD = "_applied_timestamp";
+
+    private static final String PREF_THEME_STYLE = "theme_style";
+    private static final String PREF_COLOR_SOURCE = "color_source";
+    private static final String PREF_ACCENT_COLOR = "accent_color";
+    private static final String PREF_ACCENT_BACKGROUND = "accent_background";
+    private static final String PREF_BG_COLOR = "bg_color";
+    private static final String PREF_LUMINANCE_FACTOR = "luminance_factor";
+    private static final String PREF_CHROMA_FACTOR = "chroma_factor";
+    private static final String PREF_WHOLE_PALETTE = "whole_palette";
+    private static final String PREF_TINT_BACKGROUND = "tint_background";
+
     public static final String[] SYSTEM_SETTINGS_KEYS = {
-        STATUSBAR_CLOCK_CHIP,
-        QS_PANEL_TILE_HAPTIC
+        QS_PANEL_TILE_HAPTIC,
+        OVERLAY_CATEGORY_ACCENT_COLOR,
+        OVERLAY_CATEGORY_SYSTEM_PALETTE,
+        OVERLAY_CATEGORY_THEME_STYLE,
+        OVERLAY_CATEGORY_BG_COLOR,
+        OVERLAY_COLOR_SOURCE,
+        OVERLAY_COLOR_BOTH,
+        OVERLAY_LUMINANCE_FACTOR,
+        OVERLAY_CHROMA_FACTOR,
+        OVERLAY_WHOLE_PALETTE,
+        OVERLAY_TINT_BACKGROUND,
+        COLOR_SOURCE_PRESET,
+        COLOR_SOURCE_HOME,
+        COLOR_SOURCE_LOCK,
+        TIMESTAMP_FIELD,
+        PREF_THEME_STYLE,
+        PREF_COLOR_SOURCE,
+        PREF_ACCENT_COLOR,
+        PREF_ACCENT_BACKGROUND,
+        PREF_BG_COLOR,
+        PREF_LUMINANCE_FACTOR,
+        PREF_CHROMA_FACTOR,
+        PREF_WHOLE_PALETTE,
+        PREF_TINT_BACKGROUND
     };
     
     public static final String[] SECURE_SETTINGS_KEYS = {
-        CLOCK_STYLE
+        CLOCK_STYLE,
+        OVERLAY_CATEGORY_ACCENT_COLOR,
+        OVERLAY_CATEGORY_SYSTEM_PALETTE,
+        OVERLAY_CATEGORY_THEME_STYLE,
+        OVERLAY_CATEGORY_BG_COLOR,
+        OVERLAY_COLOR_SOURCE,
+        OVERLAY_COLOR_BOTH,
+        OVERLAY_LUMINANCE_FACTOR,
+        OVERLAY_CHROMA_FACTOR,
+        OVERLAY_WHOLE_PALETTE,
+        OVERLAY_TINT_BACKGROUND,
+        COLOR_SOURCE_PRESET,
+        COLOR_SOURCE_HOME,
+        COLOR_SOURCE_LOCK,
+        TIMESTAMP_FIELD,
+        PREF_THEME_STYLE,
+        PREF_COLOR_SOURCE,
+        PREF_ACCENT_COLOR,
+        PREF_ACCENT_BACKGROUND,
+        PREF_BG_COLOR,
+        PREF_LUMINANCE_FACTOR,
+        PREF_CHROMA_FACTOR,
+        PREF_WHOLE_PALETTE,
+        PREF_TINT_BACKGROUND
     };
     
     public static final String[] SYSTEM_SETTINGS_NOTIFY_ONLY_KEYS = {
-        VOLUME_STYLE
+        VOLUME_STYLE,
+        OVERLAY_CATEGORY_ACCENT_COLOR,
+        OVERLAY_CATEGORY_SYSTEM_PALETTE,
+        OVERLAY_CATEGORY_THEME_STYLE,
+        OVERLAY_CATEGORY_BG_COLOR,
+        OVERLAY_COLOR_SOURCE,
+        OVERLAY_COLOR_BOTH,
+        OVERLAY_LUMINANCE_FACTOR,
+        OVERLAY_CHROMA_FACTOR,
+        OVERLAY_WHOLE_PALETTE,
+        OVERLAY_TINT_BACKGROUND,
+        COLOR_SOURCE_PRESET,
+        COLOR_SOURCE_HOME,
+        COLOR_SOURCE_LOCK,
+        TIMESTAMP_FIELD,
+        PREF_THEME_STYLE,
+        PREF_COLOR_SOURCE,
+        PREF_ACCENT_COLOR,
+        PREF_ACCENT_BACKGROUND,
+        PREF_BG_COLOR,
+        PREF_LUMINANCE_FACTOR,
+        PREF_CHROMA_FACTOR,
+        PREF_WHOLE_PALETTE,
+        PREF_TINT_BACKGROUND
     };
     
     public static final String[] SECURE_SETTINGS_NOTIFY_ONLY_KEYS = {
+        OVERLAY_CATEGORY_ACCENT_COLOR,
+        OVERLAY_CATEGORY_SYSTEM_PALETTE,
+        OVERLAY_CATEGORY_THEME_STYLE,
+        OVERLAY_CATEGORY_BG_COLOR,
+        OVERLAY_COLOR_SOURCE,
+        OVERLAY_COLOR_BOTH,
+        OVERLAY_LUMINANCE_FACTOR,
+        OVERLAY_CHROMA_FACTOR,
+        OVERLAY_WHOLE_PALETTE,
+        OVERLAY_TINT_BACKGROUND,
+        COLOR_SOURCE_PRESET,
+        COLOR_SOURCE_HOME,
+        COLOR_SOURCE_LOCK,
+        TIMESTAMP_FIELD,
+        PREF_THEME_STYLE,
+        PREF_COLOR_SOURCE,
+        PREF_ACCENT_COLOR,
+        PREF_ACCENT_BACKGROUND,
+        PREF_BG_COLOR,
+        PREF_LUMINANCE_FACTOR,
+        PREF_CHROMA_FACTOR,
+        PREF_WHOLE_PALETTE,
+        PREF_TINT_BACKGROUND
     };
 }
