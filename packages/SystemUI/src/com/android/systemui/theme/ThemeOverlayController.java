@@ -402,7 +402,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                     return;
                 }
                 if (DEBUG) Log.d(TAG, "Updating overlays for user switch / profile added.");
-                reevaluateSystemTheme(true /* forceReload */);
+                reevaluateSystemTheme(false /* forceReload */);
             } else if (Intent.ACTION_WALLPAPER_CHANGED.equals(intent.getAction())) {
                 if (intent.getBooleanExtra(WallpaperManager.EXTRA_FROM_FOREGROUND_APP, false)) {
                     mAcceptColorEvents = true;
@@ -491,7 +491,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                             mSkipSettingChange = false;
                             return;
                         }
-                        reevaluateSystemTheme(true /* forceReload */);
+                        reevaluateSystemTheme(false /* forceReload */);
                     }
                 },
                 UserHandle.USER_ALL);
@@ -499,7 +499,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
         mUiModeManager.addContrastChangeListener(mMainExecutor, contrast -> {
             mContrast = contrast;
             // Force reload so that we update even when the main color has not changed
-            reevaluateSystemTheme(true /* forceReload */);
+            reevaluateSystemTheme(false /* forceReload */);
         });
 
         mSecureSettings.registerContentObserverForUserSync(
@@ -518,13 +518,40 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                             mDeferredThemeEvaluation = true;
                             return;
                         }
-                        reevaluateSystemTheme(true /* forceReload */);
+                        // reevaluateSystemTheme(true /* forceReload */);
                     }
                 },
                 UserHandle.USER_ALL);
 
+        // mSystemSettings.registerContentObserverForUserSync(
+        //         LineageSettings.System.getUriFor(LineageSettings.System.STATUS_BAR_BATTERY_STYLE),
+        //         false,
+        //         new ContentObserver(mBgHandler) {
+        //             @Override
+        //             public void onChange(boolean selfChange, Collection<Uri> collection, int flags,
+        //                     int userId) {
+        //                 if (DEBUG) Log.d(TAG, "Overlay changed for user: " + userId);
+        //                 if (mUserTracker.getUserId() != userId) {
+        //                     return;
+        //                 }
+        //                 if (!mDeviceProvisionedController.isUserSetup(userId)) {
+        //                     Log.i(TAG, "Theme application deferred when setting changed.");
+        //                     mDeferredThemeEvaluation = true;
+        //                     return;
+        //                 }
+        //                 boolean isCircleBattery = LineageSettings.System.getIntForUser(
+        //                         mContext.getContentResolver(),
+        //                         LineageSettings.System.STATUS_BAR_BATTERY_STYLE,
+        //                         0, UserHandle.USER_CURRENT) == 1;
+        //                 if (isCircleBattery) {
+        //                     reevaluateSystemTheme(true /* forceReload */);
+        //                 }
+        //             }
+        //         },
+        //         UserHandle.USER_ALL);
+    
         mSystemSettings.registerContentObserverForUserSync(
-                LineageSettings.System.getUriFor(LineageSettings.System.STATUS_BAR_BATTERY_STYLE),
+                Settings.System.getUriFor(Settings.System.QS_TILE_UI_STYLE),
                 false,
                 new ContentObserver(mBgHandler) {
                     @Override
@@ -539,13 +566,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                             mDeferredThemeEvaluation = true;
                             return;
                         }
-                        boolean isCircleBattery = LineageSettings.System.getIntForUser(
-                                mContext.getContentResolver(),
-                                LineageSettings.System.STATUS_BAR_BATTERY_STYLE,
-                                0, UserHandle.USER_CURRENT) == 1;
-                        if (isCircleBattery) {
-                            reevaluateSystemTheme(true /* forceReload */);
-                        }
+                        reevaluateSystemTheme(true /* forceReload */);
                     }
                 },
                 UserHandle.USER_ALL);

@@ -3044,9 +3044,6 @@ class UserController implements Handler.Callback {
     }
 
     private void checkGetCurrentUserPermissions() {
-        if (com.android.internal.util.android.BypassUtils.isSystemLauncher(Binder.getCallingUid())) {
-            return;
-        }
         if ((mInjector.checkCallingPermission(INTERACT_ACROSS_USERS)
                 != PackageManager.PERMISSION_GRANTED) && (
                 mInjector.checkCallingPermission(INTERACT_ACROSS_USERS_FULL)
