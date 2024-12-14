@@ -35,6 +35,11 @@ import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import android.database.ContentObserver;
+import android.os.UserHandle;
+import android.provider.Settings;
+import com.android.systemui.util.settings.SecureSettings;
+
 /**
  * Switch to show plugin clock when plugin is connected, otherwise it will show default clock.
  */
