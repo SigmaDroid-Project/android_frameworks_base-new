@@ -58,6 +58,8 @@ public class ProfileLayout extends LinearLayout implements TunerService.Tunable 
     private static final String CLOCK_STYLE =
             "system:" + CLOCK_STYLE_KEY;
 
+    private static final String PlaceHolder = "clock_style";
+
     public ProfileLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         Dependency.get(TunerService.class).addTunable(this, CLOCK_STYLE);
@@ -101,7 +103,7 @@ public class ProfileLayout extends LinearLayout implements TunerService.Tunable 
     public void onTuningChanged(String key, String newValue) {
         switch (key) {
             case CLOCK_STYLE:
-                updateProfileView();
+                // updateProfileView();
                 break;
             default:
                 break;

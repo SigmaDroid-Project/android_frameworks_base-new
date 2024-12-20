@@ -279,7 +279,6 @@ public class SecureSettings {
         Settings.Secure.CHARGE_OPTIMIZATION_MODE,
         Settings.Secure.ON_DEVICE_INTELLIGENCE_UNBIND_TIMEOUT_MS,
         Settings.Secure.ON_DEVICE_INFERENCE_UNBIND_TIMEOUT_MS,
-        Settings.Secure.ON_DEVICE_INTELLIGENCE_IDLE_TIMEOUT_MS,
-        Settings.Secure.CLOCK_LS
-    };
+        Settings.Secure.ON_DEVICE_INTELLIGENCE_IDLE_TIMEOUT_MS
+        };
 }
