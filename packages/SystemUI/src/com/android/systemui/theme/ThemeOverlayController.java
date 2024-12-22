@@ -491,7 +491,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
         final IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_PROFILE_ADDED);
         filter.addAction(Intent.ACTION_WALLPAPER_CHANGED);
-        // mThemeController.observeSettings(() -> reevaluateSystemTheme(true));
+        mThemeController.observeSettings(() -> reevaluateSystemTheme(true));
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, mMainExecutor,
                 UserHandle.ALL);
         mSecureSettings.registerContentObserverForUserSync(
@@ -516,7 +516,6 @@ public class ThemeOverlayController implements CoreStartable, Dumpable, TunerSer
                             return;
                         }
                         reevaluateSystemTheme(true /* forceReload */);
-                        // reevaluateSystemTheme(false /* forceReload */);
                     }
                 },
                 UserHandle.USER_ALL);

@@ -46,9 +46,10 @@ public class ClockStyle extends RelativeLayout implements TunerService.Tunable {
         Dependency.get(TunerService.class).addTunable(this, CLOCK_STYLE);
     }
 
-    private void enableClockOverlays() {
-        mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace", "com.android.systemui.hide.smartspace", "com.android.systemui");
-        mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace_offset", "com.android.systemui.smartspace_offset.smartspace", "com.android.systemui");
+    private void enableClockOverlays(boolean enable) {
+        boolean isCenterClock = mClockStyle == 2 || mClockStyle == 4 || mClockStyle == 5 || mClockStyle == 6;
+        mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace", enable ? "com.android.systemui.hide.smartspace" : "com.android.systemui", "com.android.systemui");
+        mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace_offset", enable && isCenterClock ? "com.android.systemui.smartspace_offset.smartspace" : "com.android.systemui", "com.android.systemui");
     }
 
     @Override
@@ -79,19 +80,9 @@ public class ClockStyle extends RelativeLayout implements TunerService.Tunable {
     public void onTuningChanged(String key, String newValue) {
         switch (key) {
             case CLOCK_STYLE:
-                // mClockStyle = TunerService.parseInteger(newValue, 0);
+                mClockStyle = TunerService.parseInteger(newValue, 0);
                 updateClockView();
-                // if (mClockStyle != 0) {
-                    // enableClockOverlays();
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace", "com.android.systemui.hide.smartspace", "com.android.systemui");
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace_offset", "com.android.systemui.smartspace_offset.smartspace", "com.android.systemui");
-                // } else if (mClockStyle == 0) {
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace", "com.android.systemui", "com.android.systemui");
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace_offset", "com.android.systemui", "com.android.systemui");
-                    // mThemeUtils.setOverlayEnabled("com.android.systemui.smartspace_offset.smartspace", false);
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace", "com.android.systemui", "com.android.systemui");
-                    // mThemeUtils.setOverlayEnabled("android.theme.customization.smartspace_offset", "com.android.systemui", "com.android.systemui");
-                // }
+                enableClockOverlays(mClockStyle != 0);
                 break;
             default:
                 break;
