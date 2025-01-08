@@ -57,8 +57,8 @@
                android:layout_width="match_parent"
                android:layout_height="wrap_content" />
 
-      <include layout="@layout/keyguard_weather_area"
-               android:id="@+id/keyguard_weather_area"
+      <include layout="@layout/keyguard_weather"
+               android:id="@+id/keyguard_weather"
                android:layout_width="match_parent"
                android:layout_height="wrap_content" />
 

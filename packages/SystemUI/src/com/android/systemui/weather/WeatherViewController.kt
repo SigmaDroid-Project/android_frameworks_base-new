@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 the AxionAOSP Project
+ * Copyright (C) 2023-2024 risingOS Android Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,193 +16,176 @@
 package com.android.systemui.weather
 
 import android.content.Context
+import android.database.ContentObserver
+import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.os.UserHandle
 import android.provider.Settings
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-
-import com.android.internal.util.crdroid.OmniJawsClient
-
-import com.android.systemui.Dependency
-import com.android.systemui.plugins.statusbar.StatusBarStateController
+import com.android.internal.util.android.OmniJawsClient
 import com.android.systemui.res.R
-
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 
 class WeatherViewController(
     private val context: Context,
-    private val weatherIcon: ImageView,
-    private val weatherTemp: TextView,
-    private val weatherInfoView: View,
+    private val weatherImageView: WeatherImageView?,
+    private val weatherTextView: WeatherTextView?,
+    private var weatherText: String?
 ) : OmniJawsClient.OmniJawsObserver {
 
     private val weatherClient = OmniJawsClient(context)
     private var weatherInfo: OmniJawsClient.WeatherInfo? = null
-    private val scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
+    private var settingsObserver: SettingsObserver? = null
 
-    private var mDozing = false
-    private val statusBarStateController: StatusBarStateController = Dependency.get(StatusBarStateController::class.java)
+    private var clockFaceEnabled = false
+    private var showWeatherLocation = false
+    private var showWeatherText = false
+    private var weatherEnabled = false
 
-    private val statusBarStateListener = object : StatusBarStateController.StateListener {
-        override fun onStateChanged(newState: Int) {}
-
-        override fun onDozingChanged(dozing: Boolean) {
-            if (mDozing == dozing) return
-            mDozing = dozing
-
-            val weatherEnabled = weatherSettingsFlow.value.weatherEnabled
-
-            if (mDozing || !weatherEnabled) {
-                hideAllViews()
-                weatherClient.removeObserver(this@WeatherViewController)
-            } else {
-                weatherClient.addObserver(this@WeatherViewController)
-                updateWeather()
-                showAllViews()
-            }
+    init {
+        settingsObserver = SettingsObserver(null).apply {
+            observe()
         }
     }
 
-    private val weatherSettingsFlow = flow {
-        var previousSettings: WeatherSettings? = null
-        while (true) {
-            val currentSettings = getWeatherSettings()
-            if (currentSettings != previousSettings) {
-                emit(currentSettings)
-                previousSettings = currentSettings
-            }
-            delay(5000)
+    fun updateWeatherSettings() {
+        clockFaceEnabled = Settings.Secure.getIntForUser(
+            context.contentResolver,
+            "clock_style",
+            0, UserHandle.USER_CURRENT
+        ) != 0
+
+        weatherEnabled = Settings.System.getIntForUser(
+            context.contentResolver,
+            LOCKSCREEN_WEATHER_ENABLED,
+            0, UserHandle.USER_CURRENT
+        ) != 0
+
+        showWeatherLocation = Settings.System.getIntForUser(
+            context.contentResolver,
+            LOCKSCREEN_WEATHER_LOCATION,
+            0, UserHandle.USER_CURRENT
+        ) != 0
+
+        showWeatherText = Settings.System.getIntForUser(
+            context.contentResolver,
+            LOCKSCREEN_WEATHER_TEXT,
+            1, UserHandle.USER_CURRENT
+        ) != 0
+
+        weatherImageView?.setWeatherEnabled(weatherEnabled)
+        weatherTextView?.setWeatherEnabled(weatherEnabled)
+
+        if (weatherEnabled) enableUpdates() else disableUpdates()
+
+        if (weatherImageView?.id == R.id.default_weather_image) {
+            weatherImageView?.setWeatherEnabled(!clockFaceEnabled && weatherEnabled)
         }
-    }.stateIn(scope, SharingStarted.Eagerly, getWeatherSettings())
-
-    fun init() {
-        scope.launch {
-            weatherSettingsFlow.collectLatest { applyWeatherSettings(it) }
-        }
-        statusBarStateController.addCallback(statusBarStateListener)
-        statusBarStateListener.onDozingChanged(statusBarStateController.isDozing())
-    }
-
-    private fun getConditionText(condition: String): String {
-        val locale = context.resources.configuration.locales[0]
-        val isEnglish = locale.language.startsWith("en", ignoreCase = true)
-
-        if (!isEnglish) {
-            for ((key, value) in WEATHER_CONDITIONS) {
-                if (condition.contains(key)) {
-                    return context.resources.getString(value)
-                }
-            }
-        }
-        return condition.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
-    }
-
-    private fun getWeatherSettings() = WeatherSettings(
-        weatherEnabled = getSystemSetting(LOCKSCREEN_WEATHER_ENABLED),
-        showWeatherLocation = getSystemSetting(LOCKSCREEN_WEATHER_LOCATION),
-        showWeatherText = getSystemSetting(LOCKSCREEN_WEATHER_TEXT, defaultValue = 1),
-        showWindInfo = getSystemSetting(LOCKSCREEN_WEATHER_WIND_INFO),
-        showHumidityInfo = getSystemSetting(LOCKSCREEN_WEATHER_HUMIDITY_INFO)
-    )
-
-    private fun getSystemSetting(setting: String, defaultValue: Int = 0) =
-        Settings.System.getIntForUser(context.contentResolver, setting, defaultValue, UserHandle.USER_CURRENT) != 0
-
-    private fun applyWeatherSettings(settings: WeatherSettings) {
-        if (mDozing || !settings.weatherEnabled) {
-            hideAllViews()
-            weatherClient.removeObserver(this@WeatherViewController)
-        } else {
-            weatherClient.addObserver(this@WeatherViewController)
-            updateWeather()
-            showAllViews()
+        if (weatherTextView?.id == R.id.default_weather_text) {
+            weatherTextView?.setWeatherEnabled(!clockFaceEnabled && weatherEnabled)
         }
     }
 
-    override fun weatherUpdated() = updateWeather()
-
-    private fun updateWeather() {
-        if (!weatherSettingsFlow.value.weatherEnabled) {
-            hideAllViews()
-            return
-        }
-
-        try {
-            weatherClient.queryWeather()
-            weatherInfo = weatherClient.weatherInfo
-            weatherInfo?.let { info ->
-                weatherIcon.setImageDrawable(weatherClient.getWeatherConditionImage(info.conditionCode))
-                weatherTemp.text = buildWeatherText(info)
-                weatherTemp.isSelected = true
-            }
-        } catch (e: Exception) {}
+    private fun enableUpdates() {
+        weatherClient.addObserver(this)
+        queryAndUpdateWeather()
     }
 
-    private fun hideAllViews() {
-        scope.launch {
-            listOf(weatherInfoView, weatherIcon, weatherTemp).forEach {
-                updateViewVisibility(it, false)
-            }
-        }
+    fun disableUpdates() {
+        weatherClient.removeObserver(this)
     }
 
-    private fun showAllViews() {
-        scope.launch {
-            listOf(weatherInfoView, weatherIcon, weatherTemp).forEach {
-                updateViewVisibility(it, true)
-            }
-        }
-    }
-
-    private fun buildWeatherText(info: OmniJawsClient.WeatherInfo): String {
-        val settings = weatherSettingsFlow.value
-        val conditionText = getConditionText(info.condition.lowercase())
-
-        val locationText = if (settings.showWeatherLocation) " • ${info.city}" else ""
-        val conditionDisplay = if (settings.showWeatherText) " • $conditionText" else ""
-        val windDisplay = if (settings.showWindInfo) " • ${info.windSpeed} ${info.windUnits} ${info.pinWheel}" else ""
-        val humidityDisplay = if (settings.showHumidityInfo) " • ${info.humidity}" else ""
-
-        return "${info.temp}${info.tempUnits}$locationText$conditionDisplay$windDisplay$humidityDisplay"
+    fun removeObserver() {
+        settingsObserver?.unobserve()
     }
 
     override fun weatherError(errorReason: Int) {
         if (errorReason == OmniJawsClient.EXTRA_ERROR_DISABLED) {
             weatherInfo = null
-            weatherIcon.setImageDrawable(null)
-            weatherTemp.text = ""
-            hideAllViews()
+            weatherImageView?.setImageDrawable(null)
         }
     }
 
-    fun removeObserver() {
-        scope.cancel()
-        weatherClient.removeObserver(this)
-        statusBarStateController.removeCallback(statusBarStateListener)
+    override fun weatherUpdated() {
+        queryAndUpdateWeather()
     }
 
-    private suspend fun updateViewVisibility(view: View, visible: Boolean) {
-        withContext(Dispatchers.Main) {
-            view.visibility = if (visible) View.VISIBLE else View.GONE
+    private fun queryAndUpdateWeather() {
+        try {
+            if (!weatherEnabled) {
+                hideWeatherViews()
+                return
+            }
+
+            weatherClient.queryWeather()
+            weatherInfo = weatherClient.weatherInfo
+            weatherInfo?.let { info ->
+                weatherImageView?.setImageDrawable(weatherClient.getWeatherConditionImage(info.conditionCode))
+                weatherTextView?.text = buildWeatherText(info)
+            }
+        } catch (e: Exception) {
         }
     }
 
-    data class WeatherSettings(
-        val weatherEnabled: Boolean,
-        val showWeatherLocation: Boolean,
-        val showWeatherText: Boolean,
-        val showWindInfo: Boolean,
-        val showHumidityInfo: Boolean
-    )
+    private fun hideWeatherViews() {
+        weatherImageView?.visibility = View.GONE
+        weatherTextView?.visibility = View.GONE
+    }
+
+    private fun buildWeatherText(info: OmniJawsClient.WeatherInfo): String {
+        val conditionText = getConditionText(info.condition.lowercase())
+        return "${info.temp}${info.tempUnits}" +
+                (if (showWeatherLocation) " · ${info.city}" else "") +
+                (if (showWeatherText) " · $conditionText" else "")
+    }
+
+    private fun getConditionText(condition: String): String {
+        for ((key, value) in WEATHER_CONDITIONS) {
+            if (condition.contains(key)) {
+                return context.resources.getString(value)
+            }
+        }
+        return condition
+    }
+
+    inner class SettingsObserver(handler: Handler?) : ContentObserver(handler) {
+
+        fun observe() {
+            context.contentResolver.apply {
+                registerContentObserver(
+                    Settings.System.getUriFor(LOCKSCREEN_WEATHER_ENABLED),
+                    false, this@SettingsObserver, UserHandle.USER_ALL
+                )
+                registerContentObserver(
+                    Settings.System.getUriFor(LOCKSCREEN_WEATHER_LOCATION),
+                    false, this@SettingsObserver, UserHandle.USER_ALL
+                )
+                registerContentObserver(
+                    Settings.System.getUriFor(LOCKSCREEN_WEATHER_TEXT),
+                    false, this@SettingsObserver, UserHandle.USER_ALL
+                )
+                registerContentObserver(
+                    Settings.Secure.getUriFor("clock_style"),
+                    false, this@SettingsObserver, UserHandle.USER_ALL
+                )
+            }
+            updateWeatherSettings()
+        }
+
+        fun unobserve() {
+            context.contentResolver.unregisterContentObserver(this)
+        }
+
+        override fun onChange(selfChange: Boolean) {
+            updateWeatherSettings()
+        }
+    }
 
     companion object {
         private const val LOCKSCREEN_WEATHER_ENABLED = "lockscreen_weather_enabled"
         private const val LOCKSCREEN_WEATHER_LOCATION = "lockscreen_weather_location"
         private const val LOCKSCREEN_WEATHER_TEXT = "lockscreen_weather_text"
-        private const val LOCKSCREEN_WEATHER_WIND_INFO = "lockscreen_weather_wind_info"
-        private const val LOCKSCREEN_WEATHER_HUMIDITY_INFO = "lockscreen_weather_humidity_info"
 
         private val WEATHER_CONDITIONS = mapOf(
             "clouds" to R.string.weather_condition_clouds,
