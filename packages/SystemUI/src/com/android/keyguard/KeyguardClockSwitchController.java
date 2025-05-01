@@ -61,6 +61,7 @@ import com.android.systemui.statusbar.notification.PropertyAnimator;
 import com.android.systemui.statusbar.notification.icon.ui.viewbinder.NotificationIconContainerAlwaysOnDisplayViewBinder;
 import com.android.systemui.statusbar.notification.stack.AnimationProperties;
 import com.android.systemui.statusbar.phone.NotificationIconContainer;
+import com.android.systemui.tuner.TunerService;
 import com.android.systemui.util.ViewController;
 import com.android.systemui.util.concurrency.DelayableExecutor;
 import com.android.systemui.util.settings.SecureSettings;
@@ -89,7 +90,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
     private final ClockEventController mClockEventController;
     private final LogBuffer mLogBuffer;
     private final NotificationIconContainerAlwaysOnDisplayViewBinder mNicViewBinder;
-    private final TunerService  mTunerService;
+    private final TunerService mTunerService;
     private final ContentResolver mCR;
     private FrameLayout mSmallClockFrame; // top aligned clock
     private FrameLayout mLargeClockFrame; // centered clock
