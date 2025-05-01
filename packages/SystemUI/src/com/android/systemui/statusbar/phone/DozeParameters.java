@@ -517,7 +517,7 @@ public class DozeParameters implements
                 mSecureSettings.registerContentObserverForUserAsync(mPickupGesture,
                         this, UserHandle.USER_ALL);
                 mSecureSettings.registerContentObserverForUserAsync(mAlwaysOnEnabled,
-                        this, UserHandle.USER_ALL,
+                        this, UserHandle.USER_ALL);
                 mSecureSettings.registerContentObserverForUserAsync(mPickupGestureAmbient,
                         this, UserHandle.USER_ALL,
                         // The register calls are called in order, so this ensures that update()
