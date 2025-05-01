@@ -26,7 +26,7 @@ import com.android.app.animation.Interpolators;
 import com.android.systemui.custom.AmbientText;
 import com.android.systemui.custom.AmbientCustomImage;
 import com.android.systemui.keyguard.MigrateClocksToBlueprint;
-import com.android.systemui.R;
+import com.android.systemui.res.R;
 import com.android.systemui.log.LogBuffer;
 import com.android.systemui.log.core.LogLevel;
 import com.android.systemui.statusbar.StatusBarState;

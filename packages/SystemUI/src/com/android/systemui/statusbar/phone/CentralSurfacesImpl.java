@@ -292,6 +292,11 @@ import javax.inject.Provider;
 public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
         TunerService.Tunable {
 
+    private static final String BANNER_ACTION_CANCEL =
+            "com.android.systemui.statusbar.banner_action_cancel";
+    private static final String BANNER_ACTION_SETUP =
+            "com.android.systemui.statusbar.banner_action_setup";
+
     private static final String STATUS_BAR_BRIGHTNESS_CONTROL =
             "system:" + Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL;
     private static final String QS_TRANSPARENCY =
