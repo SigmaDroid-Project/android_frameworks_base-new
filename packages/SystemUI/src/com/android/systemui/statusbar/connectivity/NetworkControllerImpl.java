@@ -609,7 +609,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
 	        mVoWifiIconStyle = Settings.System.getIntForUser(resolver,
     	            Settings.System.VOWIFI_ICON_STYLE, 1,
         	        UserHandle.USER_CURRENT);
-            updateImsIcon();
+            // updateImsIcon();
             notifyListeners();
         }
     }
