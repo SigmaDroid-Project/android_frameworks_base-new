@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 
+import com.android.systemui.Dependency;
 import com.android.systemui.Dumpable;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
@@ -170,6 +171,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
             NotificationIconContainerAlwaysOnDisplayViewBinder nicViewBinder,
             KeyguardUnlockAnimationController keyguardUnlockAnimationController,
             SecureSettings secureSettings,
+            ContentResolver cr,
             @Main DelayableExecutor uiExecutor,
             @Background Executor bgExecutor,
             DumpManager dumpManager,
@@ -185,6 +187,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         mSmartspaceController = smartspaceController;
         mNicViewBinder = nicViewBinder;
         mSecureSettings = secureSettings;
+        mCR = cr;
         mUiExecutor = uiExecutor;
         mBgExecutor = bgExecutor;
         mKeyguardUnlockAnimationController = keyguardUnlockAnimationController;
