@@ -24,6 +24,8 @@ import static com.android.keyguard.KeyguardClockSwitch.SMALL;
 import static com.android.systemui.Flags.smartspaceRelocateToBottom;
 
 import android.annotation.Nullable;
+import android.content.Context;
+import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.os.UserHandle;
 import android.provider.Settings;
