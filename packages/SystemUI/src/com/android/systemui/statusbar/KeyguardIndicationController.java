@@ -254,6 +254,7 @@ public class KeyguardIndicationController {
     private BatteryBarView mBatteryBar;
 
     private boolean mDozing;
+    private boolean mIsActiveDreamLockscreenHosted;
     private final ScreenLifecycle mScreenLifecycle;
     @VisibleForTesting
     final Consumer<Set<Integer>> mCoExAcquisitionMsgIdsToShowCallback =
@@ -1142,10 +1143,10 @@ public class KeyguardIndicationController {
             mBatteryBar.setVisibility(View.GONE);
 
         // Device is dreaming and the dream is hosted in lockscreen
-        if (mIsActiveDreamLockscreenHosted) {
-            mIndicationArea.setVisibility(GONE);
-            return;
-        }
+        // if (mIsActiveDreamLockscreenHosted) {
+        //     mIndicationArea.setVisibility(GONE);
+        //     return;
+        // }
 
         // A few places might need to hide the indication, so always start by making it visible
         mIndicationArea.setVisibility(VISIBLE);
