@@ -206,6 +206,8 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
             @Override
             public void onAvailableClocksChanged() { }
         };
+
+        mTunerService = Dependency.get(TunerService.class);
     }
 
     /**
