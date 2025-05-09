@@ -132,7 +132,6 @@ import com.android.systemui.dagger.qualifiers.DisplayId;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.dagger.qualifiers.TestHarness;
 import com.android.systemui.shared.system.PackageManagerWrapper;
-import com.android.systemui.statusbar.policy.TaskHelper;
 import com.android.systemui.user.utils.UserScopedService;
 import com.android.systemui.user.utils.UserScopedServiceImpl;
 
@@ -828,11 +827,5 @@ public class FrameworkServicesModule {
     @Singleton
     static ImsManager provideImsManager(Context context) {
         return context.getSystemService(ImsManager.class);
-    }
-
-    @Provides
-    @Singleton
-    public TaskHelper provideTaskHelper(Context context) {
-        return new TaskHelper(context);
     }
 }
