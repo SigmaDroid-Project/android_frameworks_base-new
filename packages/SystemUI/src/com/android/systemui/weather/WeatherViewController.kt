@@ -49,31 +49,25 @@ class WeatherViewController(
         override fun onStateChanged(newState: Int) {}
 
         override fun onDozingChanged(dozing: Boolean) {
-            if (mDozing == dozing) return
+            if (mDozing == dozing) {
+                return
+            }
             mDozing = dozing
 
             val weatherEnabled = weatherSettingsFlow.value.weatherEnabled
 
-            if (mDozing || !weatherEnabled) {
-                hideAllViews()
-                weatherClient.removeObserver(this@WeatherViewController)
-            } else {
-                weatherClient.addObserver(this@WeatherViewController)
-                updateWeather()
-                showAllViews()
+            val visible = !mDozing && weatherEnabled
+            scope.launch {
+                updateViewVisibility(weatherInfoView, visible)
             }
         }
+
     }
 
     private val weatherSettingsFlow = flow {
-        var previousSettings: WeatherSettings? = null
         while (true) {
-            val currentSettings = getWeatherSettings()
-            if (currentSettings != previousSettings) {
-                emit(currentSettings)
-                previousSettings = currentSettings
-            }
-            delay(5000)
+            emit(getWeatherSettings())
+            delay(1000)
         }
     }.stateIn(scope, SharingStarted.Eagerly, getWeatherSettings())
 
@@ -91,7 +85,7 @@ class WeatherViewController(
                 return context.resources.getString(value)
             }
         }
-        return condition.split(" ").joinToString(" ") { it.replaceFirstChar { char -> char.uppercaseChar() } }
+        return condition
     }
 
     private fun getWeatherSettings() = WeatherSettings(
@@ -106,13 +100,18 @@ class WeatherViewController(
         Settings.System.getIntForUser(context.contentResolver, setting, defaultValue, UserHandle.USER_CURRENT) != 0
 
     private fun applyWeatherSettings(settings: WeatherSettings) {
-        if (mDozing || !settings.weatherEnabled) {
-            hideAllViews()
-            weatherClient.removeObserver(this@WeatherViewController)
-        } else {
-            weatherClient.addObserver(this@WeatherViewController)
-            updateWeather()
-            showAllViews()
+        scope.launch {
+            if (!settings.weatherEnabled) {
+                hideAllViews()
+                weatherClient.removeObserver(this@WeatherViewController)
+            } else {
+                weatherClient.addObserver(this@WeatherViewController)
+                updateWeather()
+            }
+
+            updateViewVisibility(weatherInfoView, settings.weatherEnabled)
+            updateViewVisibility(weatherIcon, settings.weatherEnabled)
+            updateViewVisibility(weatherTemp, settings.weatherEnabled)
         }
     }
 
@@ -143,14 +142,6 @@ class WeatherViewController(
         }
     }
 
-    private fun showAllViews() {
-        scope.launch {
-            listOf(weatherInfoView, weatherIcon, weatherTemp).forEach {
-                updateViewVisibility(it, true)
-            }
-        }
-    }
-
     private fun buildWeatherText(info: OmniJawsClient.WeatherInfo): String {
         val settings = weatherSettingsFlow.value
         val conditionText = getConditionText(info.condition.lowercase())
@@ -167,8 +158,6 @@ class WeatherViewController(
         if (errorReason == OmniJawsClient.EXTRA_ERROR_DISABLED) {
             weatherInfo = null
             weatherIcon.setImageDrawable(null)
-            weatherTemp.text = ""
-            hideAllViews()
         }
     }
 
