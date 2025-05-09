@@ -80,33 +80,13 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
     private final MediaSessionManagerHelper mMediaSessionManagerHelper;
     private final ScrimController mScrimController;
     private MediaArtObserver mMediaArtObserver;
-    private QSImpl mQSImpl = null;
-    
-    private final MediaSessionManagerHelper mMediaSessionManagerHelper;
-    private MediaArtObserver mMediaArtObserver;
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
-
-    private final KeyguardStateController.Callback mKeyguardStateCallback =
-            new KeyguardStateController.Callback() {
-                @Override
-                public void onKeyguardFadingAwayChanged() {
-                    hideMediaArt();
-                }
-
-                @Override
-                public void onKeyguardGoingAwayChanged() {
-                    hideMediaArt();
-                }
-            };
 
     private MediaArtUtils(Context context) {
         mContext = context.getApplicationContext();
         mScrimController = Dependency.get(ScrimController.class);
         setUpLockscreenScrim();
-        mStatusBarStateController.addCallback(mStatusBarStateListener);
-        mKeyguardStateController.addCallback(mKeyguardStateCallback);
-        mStatusBarStateListener.onDozingChanged(mStatusBarStateController.isDozing());
         mMediaSessionManagerHelper = MediaSessionManagerHelper.Companion.getInstance(mContext);
         mMediaSessionManagerHelper.addMediaMetadataListener(this);
         mMediaArtObserver = new MediaArtObserver();
@@ -146,20 +126,17 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
         return instance;
     }
 
-    private final StatusBarStateController.StateListener mStatusBarStateListener =
-            new StatusBarStateController.StateListener() {
-            @Override
-            public void onStateChanged(int newState) {}
-
-            @Override
-            public void onDozingChanged(boolean dozing) {
-                if (mDozing == dozing) {
-                    return;
-                }
-                mDozing = dozing;
-                updateMedia();
-            }
-    };
+    public void onDozingChanged(boolean dozing) {
+        if (mDozing == dozing) {
+            return;
+        }
+        mDozing = dozing;
+        if (mDozing) {
+            hideMediaArt();
+        } else {
+            updateMediaArtVisibility();
+        }
+    }
     
     public void updateMedia() {
         if (mMediaSessionManagerHelper.isMediaPlaying()) {
@@ -177,7 +154,8 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
         return (mLsMediaScrim != null && mLsMediaEnabled
                 && mContext.getResources().getConfiguration().orientation 
                     != Configuration.ORIENTATION_LANDSCAPE 
-                && mMediaSessionManagerHelper.isMediaPlaying()) && !mDozing;
+                && mScrimController.getState().toString().equals("KEYGUARD")
+                && mMediaSessionManagerHelper.isMediaPlaying());
     }
 
     public boolean albumArtVisible() {
@@ -193,6 +171,7 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
     }
 
     private void showMediaArt() {
+        WallpaperDepthUtils.getInstance(mContext).hideDepthWallpaper();
         if (mLsMediaScrim == null || mLsMediaScrim.getVisibility() == View.VISIBLE) return;
         mLsMediaScrim.post(() -> {
             mLsMediaScrim.setBackground(currLayeredDrawable);
@@ -307,6 +286,11 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
         updateMedia();
     }
     
+    @Override
+    public void onMediaColorsChanged() {
+        updateMedia();
+    }
+    
     private class MediaArtObserver extends ContentObserver {
         public MediaArtObserver() {
             super(null);
@@ -345,4 +329,9 @@ public class MediaArtUtils implements MediaSessionManagerHelper.MediaMetadataLis
             updateMediaArtVisibility();
         }
     };
+    
+    public void setSubjectAlpha(float subjectAlpha) {
+        if (mLsMediaScrim == null) return;
+        mLsMediaScrim.post(() -> mLsMediaScrim.setAlpha(subjectAlpha));
+    }
 }
